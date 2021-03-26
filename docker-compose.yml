@@ -1,0 +1,31 @@
+version: '2.1'
+
+services:
+
+  postgres:
+    build: docker/postgresql
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=oauth2
+      - PGDATA=/data/postgres
+    volumes:
+       - pg-data:/data/postgres
+    ports:
+      - '5432:5432'
+
+  goose:
+    build: docker/goose
+    environment:
+      - GOOSE_DRIVER=postgres
+      - GOOSE_DATABASE=oauth2
+      - GOOSE_USER=postgres
+      - GOOSE_HOST=postgres
+      - GOOSE_PASSWORD=postgres
+      - GOOSE_PORT=5432
+    volumes:
+      - ./migrations:/migrations
+    links:
+      - postgres
+
+volumes:
+  pg-data:
